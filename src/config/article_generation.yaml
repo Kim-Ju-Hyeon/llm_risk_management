@@ -5,6 +5,7 @@ save_dir: data/dummy_articles
 device: 'cpu' # 'mps' in M1 Mac
 
 model_name: tiiuae/falcon-40b # meta-llama/Llama-2-7b-h
+task: text-generation
 topics: [
     {"category": "Travel", "keyword": "Exotic Destinations"},
     {"category": "Health and Wellness", "keyword": "Mindfulness Techniques"},
