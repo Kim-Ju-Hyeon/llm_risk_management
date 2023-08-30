@@ -290,6 +290,9 @@ server_jupyter/
 .Trash-0
 */.Trash-0/*
 
+# Github Token
+github_token.txt
+
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode
 
