@@ -1,0 +1,13 @@
+INFO  | File generate_dummy_article.py | Line 27    | Writing log file to /home/jovyan/llm_risk_management/src/logs/log_0831_105505
+INFO  | File generate_dummy_article.py | Line 28    | Exp instance id = 0831_105505
+INFO  | File instantiator.py      | Line 21    | Created a temporary directory at /tmp/tmp5ga8gqko
+INFO  | File instantiator.py      | Line 76    | Writing /tmp/tmp5ga8gqko/_remote_module_non_scriptable.py
+ERROR | File generate_dummy_article.py | Line 70    | Traceback (most recent call last):
+  File "generate_dummy_article.py", line 39, in main
+    pipeline = transformers.pipeline(
+  File "/opt/conda/lib/python3.8/site-packages/transformers/pipelines/__init__.py", line 807, in pipeline
+    framework, model = infer_framework_load_model(
+  File "/opt/conda/lib/python3.8/site-packages/transformers/pipelines/base.py", line 276, in infer_framework_load_model
+    raise ValueError(f"Could not load model {model} with any of the following classes: {class_tuple}.")
+ValueError: Could not load model tiiuae/falcon-40b with any of the following classes: (<class 'transformers.models.auto.modeling_auto.AutoModelForCausalLM'>,).
+

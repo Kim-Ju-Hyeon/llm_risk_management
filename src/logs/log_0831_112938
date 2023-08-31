@@ -1,0 +1,44 @@
+INFO  | File generate_dummy_article.py | Line 27    | Writing log file to /home/jovyan/llm_risk_management/src/logs/log_0831_112938
+INFO  | File generate_dummy_article.py | Line 28    | Exp instance id = 0831_112938
+ERROR | File generate_dummy_article.py | Line 70    | Traceback (most recent call last):
+  File "/opt/conda/lib/python3.8/site-packages/huggingface_hub/utils/_errors.py", line 261, in hf_raise_for_status
+    response.raise_for_status()
+  File "/opt/conda/lib/python3.8/site-packages/requests/models.py", line 1021, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://huggingface.co/meta-llama/Llama-2-7b-h/resolve/main/tokenizer_config.json
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/opt/conda/lib/python3.8/site-packages/transformers/utils/hub.py", line 428, in cached_file
+    resolved_file = hf_hub_download(
+  File "/opt/conda/lib/python3.8/site-packages/huggingface_hub/utils/_validators.py", line 118, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.8/site-packages/huggingface_hub/file_download.py", line 1195, in hf_hub_download
+    metadata = get_hf_file_metadata(
+  File "/opt/conda/lib/python3.8/site-packages/huggingface_hub/utils/_validators.py", line 118, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/opt/conda/lib/python3.8/site-packages/huggingface_hub/file_download.py", line 1541, in get_hf_file_metadata
+    hf_raise_for_status(r)
+  File "/opt/conda/lib/python3.8/site-packages/huggingface_hub/utils/_errors.py", line 293, in hf_raise_for_status
+    raise RepositoryNotFoundError(message, response) from e
+huggingface_hub.utils._errors.RepositoryNotFoundError: 404 Client Error. (Request ID: Root=1-64effb12-5fb906dd72bba87006ee0be0;c81b1633-d4e7-45b3-b8dd-d3e9dc3f50fa)
+
+Repository Not Found for url: https://huggingface.co/meta-llama/Llama-2-7b-h/resolve/main/tokenizer_config.json.
+Please make sure you specified the correct `repo_id` and `repo_type`.
+If you are trying to access a private or gated repo, make sure you are authenticated.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "generate_dummy_article.py", line 37, in main
+    tokenizer = AutoTokenizer.from_pretrained(config.model_name)
+  File "/opt/conda/lib/python3.8/site-packages/transformers/models/auto/tokenization_auto.py", line 677, in from_pretrained
+    tokenizer_config = get_tokenizer_config(pretrained_model_name_or_path, **kwargs)
+  File "/opt/conda/lib/python3.8/site-packages/transformers/models/auto/tokenization_auto.py", line 510, in get_tokenizer_config
+    resolved_config_file = cached_file(
+  File "/opt/conda/lib/python3.8/site-packages/transformers/utils/hub.py", line 449, in cached_file
+    raise EnvironmentError(
+OSError: meta-llama/Llama-2-7b-h is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'
+If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `huggingface-cli login` or by passing `token=<your_token>`
+
