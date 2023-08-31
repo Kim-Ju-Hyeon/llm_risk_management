@@ -4,7 +4,7 @@ root_dir: /home/jovyan/llm_risk_management/src
 save_dir: data/dummy_articles
 device: 'cpu' # 'mps' in M1 Mac
 
-model_name: tiiuae/falcon-40b # meta-llama/Llama-2-7b-h
+model_name: meta-llama/Llama-2-7b-h # meta-llama/Llama-2-7b-h, nlpai-lab/kullm-polyglot-5.8b-v2, tiiuae/falcon-40b
 task: text-generation
 topics: [
     {"category": "Travel", "keyword": "Exotic Destinations"},
