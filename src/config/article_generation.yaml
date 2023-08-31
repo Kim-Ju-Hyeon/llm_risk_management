@@ -18,3 +18,4 @@ topics: [
     {"category": "Environmental Issues", "keyword": "Plastic Pollution"},
     {"category": "Art and Creativity", "keyword": "Street Art Movement"}
 ]
+max_length: 500

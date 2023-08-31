@@ -8,7 +8,6 @@ import yaml
 import pandas as pd
 from dotenv import load_dotenv
 
-
 from utils.train_helper import mkdir
 from utils.logger import setup_logging
 
@@ -39,7 +38,7 @@ def main(conf_file_path):
             config.device = 'cpu'
             torch_dtype = torch.float32
             
-        tokenizer = AutoTokenizer.from_pretrained(config.model_name, user_auth_token=huggingface_token)
+        tokenizer = AutoTokenizer.from_pretrained(config.model_name, token=huggingface_token)
         
         pipeline = transformers.pipeline(
             config.task,
@@ -55,15 +54,15 @@ def main(conf_file_path):
             category = topic['category']
             keyword = topic['keyword']
             
-            x = f"You are a journalist responsible for writing articles. Imagine you specialize in a {category}, and you're asked to write an article related to that {keyword}. Please proceed to write an article that fits the given {keyword}."
+            input_text = f"You are a journalist responsible for writing articles. Imagine you specialize in a {category}, and you're asked to write an article related to that {keyword}. Please proceed to write an article that fits the given {keyword}."
             
             sequences = pipeline(
-                    x,
+                    input_text,
                     do_sample=True,
                     top_k=10,
                     num_return_sequences=1,
                     eos_token_id=tokenizer.eos_token_id,
-                    max_length=max_length,
+                    max_length=config.max_length,
             )
             
             df = df.append({"Category": category, "Content": sequences[0]["generated_text"].replace(input_text, "")}, ignore_index=True)
