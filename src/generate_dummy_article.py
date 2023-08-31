@@ -6,6 +6,8 @@ import pytz
 from easydict import EasyDict as edict
 import yaml
 import pandas as pd
+from dotenv import load_dotenv
+
 
 from utils.train_helper import mkdir
 from utils.logger import setup_logging
@@ -15,8 +17,11 @@ import transformers
 import torch
 
 @click.command()
-@click.option('--conf_file_path', type=click.STRING, default=None)
+@click.option('--conf_file_path', type=click.STRING, default='./config/article_generation.yaml')
 def main(conf_file_path):
+    load_dotenv()
+    huggingface_token = os.getenv("huggingface_token")
+    
     config = edict(yaml.load(open(conf_file_path, 'r'), Loader=yaml.FullLoader))
     now = datetime.datetime.now(pytz.timezone('Asia/Seoul'))
     date = now.strftime('%m%d_%H%M%S')
@@ -27,11 +32,6 @@ def main(conf_file_path):
     logger.info(f"Writing log file to {log_file}")
     logger.info(f"Exp instance id = {date}")
     
-    file_path = '../github_token.txt'
-
-    with open(file_path, 'r') as f:
-        loaded_article = f.read()
-    
     try:
         if torch.cuda.is_available() and config.device == 'gpu':
             torch_dtype = torch.float16
@@ -39,7 +39,7 @@ def main(conf_file_path):
             config.device = 'cpu'
             torch_dtype = torch.float32
             
-        tokenizer = AutoTokenizer.from_pretrained(config.model_name, token='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')
+        tokenizer = AutoTokenizer.from_pretrained(config.model_name, user_auth_token=huggingface_token)
         
         pipeline = transformers.pipeline(
             config.task,
