@@ -22,10 +22,15 @@ def main(conf_file_path):
     date = now.strftime('%m%d_%H%M%S')
     log_name = 'log_'+ date
     
-    log_file = os.path.join(config.root_dir, 'log', log_name)
+    log_file = os.path.join(config.root_dir, 'logs', log_name)
     logger = setup_logging('INFO', log_file, logger_name=str(date))
     logger.info(f"Writing log file to {log_file}")
     logger.info(f"Exp instance id = {date}")
+    
+    file_path = '../github_token.txt'
+
+    with open(file_path, 'r') as f:
+        loaded_article = f.read()
     
     try:
         if torch.cuda.is_available() and config.device == 'gpu':
@@ -34,7 +39,7 @@ def main(conf_file_path):
             config.device = 'cpu'
             torch_dtype = torch.float32
             
-        tokenizer = AutoTokenizer.from_pretrained(config.model_name)
+        tokenizer = AutoTokenizer.from_pretrained(config.model_name, token='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')
         
         pipeline = transformers.pipeline(
             config.task,
