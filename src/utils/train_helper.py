@@ -12,29 +12,6 @@ import yaml
 import torch
 
 
-def get_config(config_file):
-    config = edict(yaml.load(open(config_file, 'r'), Loader=yaml.FullLoader))
-
-    now = datetime.datetime.now(pytz.timezone('Asia/Seoul'))
-
-    config.seed = set_seed(config.seed)
-
-    config.sub_dir = '_'.join([
-        config.model_name, now.strftime('%m%d_%H%M%S')
-    ])
-
-    config.exp_dir = os.path.join(config.exp_dir, str(config.exp_name))
-    config.exp_sub_dir = os.path.join(config.exp_dir, config.sub_dir)
-    config.model_save = os.path.join(config.exp_sub_dir, "model_save")
-
-    mkdir(config.model_save)
-
-    save_name = os.path.join(config.exp_sub_dir, 'config.yaml')
-    yaml.dump(edict2dict(config), open(save_name, 'w'), default_flow_style=False)
-
-    return config
-
-
 def save_yaml(config):
     save_name = os.path.join(config.exp_sub_dir, 'config.yaml')
     yaml.dump(edict2dict(config), open(save_name, 'w'), default_flow_style=False)
