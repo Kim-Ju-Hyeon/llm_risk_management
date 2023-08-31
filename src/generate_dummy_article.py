@@ -7,7 +7,7 @@ from easydict import EasyDict as edict
 import yaml
 import pandas as pd
 
-from utils.train_helper import mkdir, edict2dict
+from utils.train_helper import mkdir
 from utils.logger import setup_logging
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -28,21 +28,46 @@ def main(conf_file_path):
     logger.info(f"Exp instance id = {date}")
     
     try:
-        model = config.model_name
-        tokenizer = AutoTokenizer.from_pretrained(model)
+        if torch.cuda.is_available() and config.device == 'gpu':
+            torch_dtype = torch.float16
+        else:
+            config.device = 'cpu'
+            torch_dtype = torch.float32
+            
+        tokenizer = AutoTokenizer.from_pretrained(config.model_name)
         
         pipeline = transformers.pipeline(
             config.task,
-            model=model,
+            model=config.model_name,
             tokenizer=tokenizer,
-            torch_dtype=torch.float32,
-            trust_remote_code=True,
+            torch_dtype=torch_dtype,
             device=config.device
         )
 
+        df = pd.DataFrame(columns=["Category", "Content"])
+        
+        for topic in config.topics:
+            category = topic['category']
+            keyword = topic['keyword']
+            
+            x = f"You are a journalist responsible for writing articles. Imagine you specialize in a {category}, and you're asked to write an article related to that {keyword}. Please proceed to write an article that fits the given {keyword}."
+            
+            sequences = pipeline(
+                    x,
+                    do_sample=True,
+                    top_k=10,
+                    num_return_sequences=1,
+                    eos_token_id=tokenizer.eos_token_id,
+                    max_length=max_length,
+            )
+            
+            df = df.append({"Category": category, "Content": sequences[0]["generated_text"].replace(input_text, "")}, ignore_index=True)
+
+        csv_path = os.path.join(config.root_dir, config.save_dir)
+        df.to_csv(csv_path, index=False)
+        
     except:
         logger.error(traceback.format_exc())
-    
     
     
 if __name__ == '__main__':
