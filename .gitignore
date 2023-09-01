@@ -78,6 +78,7 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+logs
 
 # Unit test / coverage reports
 htmlcov/
@@ -286,6 +287,8 @@ server_config/
 server_jupyter/*
 server_jupyter/
 */server_jupyter/*
+
+ignore_jupyter/*
 
 .Trash-0
 */.Trash-0/*
