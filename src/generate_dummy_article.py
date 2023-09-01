@@ -47,9 +47,8 @@ def main(conf_file_path):
             torch_dtype=torch_dtype,
             device=config.device
         )
-
-        df = pd.DataFrame(columns=["Category", "Content"])
         
+        data = []
         for topic in config.topics:
             category = topic['category']
             keyword = topic['keyword']
@@ -65,8 +64,9 @@ def main(conf_file_path):
                     max_length=config.max_length,
             )
             
-            df = df.append({"Category": category, "Content": sequences[0]["generated_text"].replace(input_text, "")}, ignore_index=True)
+            data.append({"Category": category, "Content": sequences[0]["generated_text"].replace(input_text, "")}, ignore_index=True)
 
+        df = pd.DataFrame(data)
         csv_path = os.path.join(config.root_dir, config.save_dir)
         df.to_csv(csv_path, index=False)
         
