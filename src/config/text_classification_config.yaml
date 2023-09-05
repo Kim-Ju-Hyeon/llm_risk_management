@@ -1,0 +1,30 @@
+---
+exp_name: text_classification # 0417
+root_dir: /root/jupyter/llm_risk_management/src
+save_dir: data/database
+device: cuda:0 # 'mps' in M1 Mac
+model: lamma2 # lamma2 or gpt3.5
+
+time_limit: 120
+
+model_name: meta-llama/Llama-2-13b-chat-hf 
+task: text-generation
+    
+lamma_config:
+    do_sample: True
+    top_k: 10
+    num_return_sequences: 1
+    eos_token_id: 2  # Replace with your eos_token_id
+    max_length: 4096
+    temperature: 0.1
+    repetition_penalty: 1.2
+    no_repeat_ngram_size: 3
+    top_p: 0.9
+
+openai_config:
+    model: gpt-3.5-turbo
+    max_tokens: 2048
+    temperature: 0.2
+    top_p: 1.0
+    best_of: 1
+    stop: ["\n"]
