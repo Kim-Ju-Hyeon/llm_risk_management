@@ -12,11 +12,6 @@ import yaml
 import torch
 
 
-def save_yaml(config):
-    save_name = os.path.join(config.exp_sub_dir, 'config.yaml')
-    yaml.dump(edict2dict(config), open(save_name, 'w'), default_flow_style=False)
-
-
 def set_seed(seed=None):
     """
     set the random seed using the required value (`seed`)
@@ -64,28 +59,3 @@ def model_snapshot(epoch, model, optimizer, scheduler, best_valid_loss, exp_dir)
         }
         torch.save(ck, exp_dir)
 
-
-def save_config(config):
-    save_name = os.path.join(config.exp_sub_dir, 'config.yaml')
-    yaml.dump(edict2dict(config), open(save_name, 'w'), default_flow_style=False)
-
-
-def edict2dict(edict_obj):
-    dict_obj = {}
-
-    for key, vals in edict_obj.items():
-        if isinstance(vals, edict):
-            dict_obj[key] = edict2dict(vals)
-        else:
-            dict_obj[key] = vals
-
-    return dict_obj
-
-
-def mkdir(folder):
-    if not os.path.isdir(folder):
-        os.makedirs(folder)
-
-
-def count_parameters(model):
-    return sum(p.numel() for p in model.parameters() if p.requires_grad)
