@@ -120,7 +120,7 @@ def generate_input_text(prompt_dict, article):
     article (str): The article text
     
     Returns:
-    str: Generated input text
+    str: Generated input text list
     """
     chosen_role_prompt = random.choice(prompt_dict['role_prompts'])
     chosen_step_prompt = random.choice(prompt_dict['step_prompts'])

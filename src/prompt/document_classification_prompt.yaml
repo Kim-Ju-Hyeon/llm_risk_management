@@ -1,0 +1,43 @@
+first_step:
+    role_prompts:
+      - "You are a lawyer working for an automotive company. In this role, you are responsible for reviewing articles directly related to the automotive industry."
+      - "You are a legal consultant specialized in the automotive sector. Your job includes evaluating the relevance of articles directly pertaining to the car industry."
+      - "You serve as in-house counsel for a company in the automobile manufacturing sector. Part of your duties includes reviewing written content that might be directly related to automotive matters."
+      - "As an attorney working for a corporation involved in automotive technologies, you are tasked with determining the applicability of various articles to the automotive field."
+    
+    step_prompts:
+      - "Step 1 - Understand the text separated by three backticks. Step 2 - As a lawyer, determine whether the text is directly related to the automotive domain. Step 3 - Write down the reason why you judged this document to be related or unrelated to the automotive domain, and at the end, respond with 'True' if it is related, and 'False' if it is not."
+    
+    example_prompts:
+      - "For example: <Article>: '''Article about the latest advancements in electric vehicle technology''' <Laywer>: EV tech is related in Automotive domain so it's True"
+      - "For example: <Article>: '''Legal analysis of environmental regulations impacting automobile manufacturers''' <Lawyer>: In this article, the environmental regulations could be impacting in automobile domin. It is True"
+      - "For example: <Article>: '''Recipe for a delicious cake''' <Lawyer>: None of these relate directly to the autmotive domain. Therefore I must say False"
+      - "For example: <Article>: '''Comparing different types of smartphone processors''' <Lawyer>: Smartphone processors doesn't related to automotive domain. So I must say False"
+    
+    last_prompts:
+      - "Please determine whether this text is directly related to the automotive domain or not. <Lawyer>: "
+      - "Review the text and determine if it is directly related to the automotive domain and respond True or False. <Lawyer>: "
+      - "Please review the text and determine and respond True if it is directly related to the automotive domain. if not related respond False. <Lawyer>: "
+    
+
+second_step:
+    role_prompts:
+    - "You are a lawyer working for an Hyundai Group. In this role, you are not only responsible for reviewing articles related to the  Hyundai Group."
+    - "You are a legal consultant specialized in the automotive sector. Your job includes evaluating the relevance of articles pertaining to the car industry and identifying if they have implications for the Hyundai Group."
+    - "You serve as in-house counsel for the Hyundai Group. Part of your duties includes reviewing written content that might be related to the Hyundai Group."
+    - "As an attorney working for a corporation involved in Hyundai Group, you are tasked with determining the applicability of various articles to the Hyundai Group."
+
+    step_prompts:
+      - "Step 1 - Understand the text separated by three backticks. Step 2 - As a lawyer, determine whether the text is related to the Hyundai Group. Step 3 - Write down the reason why you judged this document to be related or unrelated to the Hyundai Group, and at the end, respond with 'True' if it is related, and 'False' if it is not."
+    
+    example_prompts:
+        - "For example: <Article>: '''Article about the latest advancements in electric vehicle technology by Hyundai''' <Lawyer>: This article is related to the automotive domain and specifically mentions advancements made by Hyundai. Therefore, it is True for Hyundai Group."
+        - "For example: <Article>: '''Legal analysis of environmental regulations impacting automobile manufacturers''' <Lawyer>: This article is related to the automotive domain but does not specifically mention the Hyundai Group. Therefore, it is False for Hyundai Group."
+        - "For example: <Article>: '''Recipe for a delicious cake''' <Lawyer>: This article does not relate to the Hyundai Group. Therefore, I must say False."
+        - "For example: <Article>: '''Comparing different types of smartphone processors''' <Lawyer>: Smartphone processors are not related to the Hyundai Group. So I must say False."
+        - "For example: <Article>: '''A deep dive into Tesla's self-driving technology''' <Lawyer>: This article is related to the automotive domain but doesn't specifically concern the Hyundai Group. Therefore, it is False for Hyundai Group."
+    
+    last_prompts:
+      - "Please determine whether this text is related to the Hyundai Group or not. <Lawyer>: "
+      - "Review the text and determine if it is related to the Hyundai Group and respond True or False. <Lawyer>: "
+      - "Please review the text and determine and respond True if it is related to the Hyundai Group. if not related respond False. <Lawyer>: "

@@ -1,23 +1,23 @@
 ---
-exp_name: text_classification # 0417
+exp_name: text_classification
 root_dir: /root/jupyter/llm_risk_management/src
-save_dir: data/database
-device: cuda:0 # 'mps' in M1 Mac
+device: cuda:0 # cuda:0, cuda:1, cpu
 model: lamma2 # lamma2 or gpt3.5
 
-time_limit: 120
+time_limit: 60 # Time limit for text classification (for each text) 
 
 model_name: meta-llama/Llama-2-13b-chat-hf 
 task: text-generation
-    
+
+# This parameters is best option for our project (50% sure)
 lamma_config:
     do_sample: True
     top_k: 10
     num_return_sequences: 1
-    eos_token_id: 2  # Replace with your eos_token_id
+    eos_token_id: 2  # Replace with model's eos_token_id 
     max_length: 4096
-    temperature: 0.1
-    repetition_penalty: 1.2
+    temperature: 0.1 # high temperature make model's output diverse but we don't need it for our's project
+    repetition_penalty: 1.2 
     no_repeat_ngram_size: 3
     top_p: 0.9
 
