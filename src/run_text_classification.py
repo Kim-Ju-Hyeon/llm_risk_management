@@ -6,8 +6,9 @@ from dotenv import load_dotenv
 import time
 import re
 import random
+import datetime
 
-from utils.util_fnc import load_yaml
+from utils.util_fnc import load_yaml, mkdir
 from dataset.article_dataset import make_dataset
 from models.llm import LLM
 
@@ -15,6 +16,9 @@ from models.llm import LLM
 @click.command()
 @click.option('--conf_file_path', type=click.STRING, default='./config/text_classification_config.yaml')
 def main(conf_file_path):
+    now = datetime.datetime.now(pytz.timezone('Asia/Seoul'))
+    date = now.strftime('%m%d_%H%M%S')
+    
     # Add get your own Huggingface Token and Open AI API Key and add it in .env
     load_dotenv()
     huggingface_token = os.getenv("huggingface_token")
@@ -53,15 +57,11 @@ def main(conf_file_path):
         new_df.at[index, 'model_description_2'] = cleaned_output
         
     
+    save_path = os.path.join(config.root_dir, 'exp')
+    mkdir(save_path)
+    new_df.to_csv(os.path.join(save_path, f'classified_article_{date}.csv', index=False))
         
 
-        
 
-
-    
-
-
-
-
-
-
+if __name__ == '__main__':
+    main()

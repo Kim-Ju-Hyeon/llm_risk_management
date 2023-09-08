@@ -1,6 +1,7 @@
 ---
 exp_name: text_classification
 root_dir: /root/jupyter/llm_risk_management/src
+save_dir: 
 device: cuda:0 # cuda:0, cuda:1, cpu
 model: lamma2 # lamma2 or gpt3.5
 
