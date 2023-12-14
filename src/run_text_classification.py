@@ -22,13 +22,14 @@ def main(conf_file_path):
 
     # all hyperparameters and configurations are in config directory
     config = load_yaml(conf_file_path)
+    config.root_dir = os.getwd()
     prompt = load_yaml(os.path.join(config.root_dir, 'prompt', f'{config.task}_prompt.yaml'))
 
     # load the LLM class that we want
     llm = LLM(config)
 
     # load the data that we want to classify
-    df = pd.read_csv(os.path.join(config.root_dir, 'dataset', f'{config.task}_data.csv'))
+    df = pd.read_csv(os.path.join(config.root_dir, 'dataset', f'{config.dataset}.csv'))
 
     preprocessed_review = []
     translate = []
