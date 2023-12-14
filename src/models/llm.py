@@ -2,7 +2,7 @@ from transformers import AutoTokenizer, AutoModel, pipeline
 import torch
 import openai
 import time
-from utils.util_fnc import cleaning_text, generate_input_text
+from utils.util_fnc import preprocess, generate_input_text
 
 
 class LLM:
@@ -13,7 +13,8 @@ class LLM:
         # Load the appropriate model and tokenizer based on the configuration
         if self.config['model'] == 'lamma2':
             # Initialize the Lamma2 tokenizer
-            self.tokenizer = AutoTokenizer.from_pretrained(config['model_name'], token=config['huggingface_token'])
+            # self.tokenizer = AutoTokenizer.from_pretrained(config['model_name'], token=config['huggingface_token'])
+            self.tokenizer = AutoTokenizer.from_pretrained(config['model_name'])
 
             # Check if CUDA is available and set the appropriate data type, If inference at GPU we need to set data type ro float16 (But when we inference at CPU, we need to set float32)
             if torch.cuda.is_available() and 'cuda' in config['device']:
@@ -30,20 +31,24 @@ class LLM:
                 torch_dtype=self.torch_dtype,
                 device=config['device']
             )
-        elif self.config['model'] == 'gpt3.5':
-            # we use GPT-3.5 at Open AI API so we don't need any extra pipeline
+
+        elif 'gpt' in self.config['model']:
             pass
+
         else:
             # Raise an error if an unsupported model is specified
             raise ValueError("Not a supported model")
 
     # Generate an answer based on the input x
-    def answer(self, x):
+    def answer(self, input_text_dict: dict): -> str:
         if self.config['model'] == 'lamma2':
+            
             # Preprocess the input and generate an answer using Lamma2
-            x = '\n'.join(x)
+            
+            x = ', '.join(f'{k}={v}' for k, v in input_text_dict.items())
             sequences = self.pipeline(x, **self.config['lamma_config'])
             return sequences[0]['generated_text'].replace(x, "")
+        
         elif self.config['model'] == 'gpt3.5':
             '''
             Preprocess the input and generate an answer using GPT-3.5
@@ -63,41 +68,16 @@ class LLM:
             로 message를 구성하였습니다.
             '''
             messages = [
-                {"role": "system", "content": '\n'.join(x[:3])},
-                {"role": "assistant", "content": x[3]},
-                {"role": "user", "content": x[4]}
+                {"role": "system", "content": input_text_dict['role_prompt']},
+                {"role": "system", "content": input_text_dict['step_prompt']},
+                {"role": "assistant", "content": input_text_dict['chosen_example_prompt']},
+                {"role": "user", "content": input_text_dict['text']},
+                {"role": "user", "content": input_text_dict['fin_prompt']}
             ]
+
             response = openai.ChatCompletion.create(**self.config['openai_config'], messages=messages)
-            return response['choices'][0]['text']
+            return response.choices[0].message.content
+        
         else:
             # Raise an error if an unsupported model is specified
             raise ValueError("Not a supported model")
-
-    def evaluate_text(self, article, prompt_dict):
-        # Initialize variables for time tracking
-        start_time = time.time()
-        elapsed_time = 0
-
-        # Loop to generate and evaluate text until the time limit is reached
-        while elapsed_time < self.config.time_limit:
-            # Generate the input text
-            input_text = generate_input_text(prompt_dict, article)
-            # Get the generated answer
-            gen_text = self.answer(input_text)
-            # Clean the generated text
-            cleaned_output = cleaning_text(gen_text)
-            # Skip the output if it's too long
-            if len(cleaned_output) >= 500:
-                continue
-
-            # Evaluate the cleaned output
-            if "True" in cleaned_output and "False" not in cleaned_output:
-                return True, cleaned_output
-            elif "False" in cleaned_output and "True" not in cleaned_output:
-                return False, cleaned_output
-
-            # Update elapsed time
-            elapsed_time = time.time() - start_time
-
-        # If time limit is reached without a definitive answer
-        return None, None

@@ -1,0 +1,30 @@
+
+role_prompt:
+  - "You are employee who is in charge of monitoring customer reviews at LG Electronics, you should read the comments left by customers and summarize what they are about."
+
+step_prompt:
+  - "First, you  have to translate the review. And extract keyword (in Korean) about this review, and make the topic (in Korean) about the review and finally summarize (in Korean) what the review is about. Lastly, evaluate the risk of the review you read and rate it 0 to 5"
+
+fin_prompt:
+  - "Please read the review and respond in the json format -> {'translate': '', 'keyword': '', 'topic': '', 'summary': '', 'risk_level':''}"
+
+
+example_prompt:
+  - - "Not that great While it it a 4K projector it misses the mark on the basics For instance you can t adjust the feet So you have to place shims under each foot to adjust the elevation and level The other issue is heat I keep getting an internal heating alert after about 40 minutes of use For the price the basics should have been addressed"
+    - translate: "그다지 좋지 않습니다. 4K 프로젝터이긴 하지만 기본적인 것들에서 미흡합니다. 예를 들어 발을 조절할 수 없어서 각 발마다 쐐기를 넣어 높낮이 및 수평을 조정해야 합니다. 또 다른 문제는 열입니다. 사용한 지 약 40분 후에 내부 과열 알림을 계속 받습니다. 가격대비 기본적인 사항들이 해결되었어야 합니다."
+      keyword: ["발 조절 불가", "수평 조절 어려움", "열", "내부 과열 알림 지속 발생"]
+      topic: "발 높이 조절 문제와 내부 과열 문제"
+      summary: "4K 프로젝터이지만 발 높이 조절 불가능하고, 40분 사용 후 내부 과열 알림이 발생하는 등 기본 사항들이 미비함."
+      risk_level: 5
+  - - "LG Laptop At first the LG gave me a favorable feeling The system appeared to work fine until I got to a video call and discovered the microphone did not work I worked with LG tech support Good people and he could not get it to work I decided to return the laptop for a refund"
+    - translate: "처음에 LG 노트북을 사용하면서 좋은 인상을 받았습니다. 시스템은 원활하게 작동하는 것처럼 보였지만 비디오 통화를 하려고 할 때 마이크가 작동하지 않는 것을 발견했습니다. LG 기술 지원과 함께 문제를 해결하려고 시도했으나 성공하지 못했습니다. 결국 환불을 위해 노트북을 반품하기로 결정했습니다."
+      keyword: ["마이크 작동 오류", "기술 지원으로 미해결", "반품"]
+      topic: "마이크 결함으로 인한 반품"
+      summary: "마이크가 작동하지 않는 문제를 경험했으며, LG 기술 지원의 도움을 받았음에도 불구하고 문제를 해결할 수 없어 최종적으로 환불을 결정했습니다."
+      risk_level: 3
+  - - "Screen Burn In Issue Had the Monitor for over a year and was really good Started having burn ins after playing games which support HDR The Burn in does fade away after running a Pixel Refresher on Youtube for 3 to 4 hours But it comes back right away once you start playing Games with HDR"
+    - translate: "모니터를 1년 넘게 사용했고 정말 좋았습니다. HDR을 지원하는 게임을 플레이 한 후 화면 잔상 문제가 시작되었습니다. YouTube에서 픽셀 리프레셔를 3~4시간 실행한 후 잔상이 사라지기는 하지만, HDR 게임을 다시 시작하면 바로 다시 생깁니다."
+      keyword: ["잔상 문제", "픽셀 리프레셔 3~4시간 실행 후 정상화"]
+      topic: "HDR게임 후 화면 잔상 문제"
+      summary: "HDR을 지원하는 게임 사용 후 화면 잔상 발생, YouTube에서 픽셀 리프레셔 사용으로 일시적 개선 가능하지만 문제 지속됨"
+      risk_level: 4

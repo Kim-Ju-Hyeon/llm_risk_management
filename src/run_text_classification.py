@@ -9,16 +9,12 @@ import random
 import datetime
 
 from utils.util_fnc import load_yaml, mkdir
-from dataset.article_dataset import make_dataset
 from models.llm import LLM
 
 
 @click.command()
 @click.option('--conf_file_path', type=click.STRING, default='./config/text_classification_config.yaml')
 def main(conf_file_path):
-    now = datetime.datetime.now(pytz.timezone('Asia/Seoul'))
-    date = now.strftime('%m%d_%H%M%S')
-    
     # Add get your own Huggingface Token and Open AI API Key and add it in .env
     load_dotenv()
     huggingface_token = os.getenv("huggingface_token")
@@ -26,40 +22,73 @@ def main(conf_file_path):
 
     # all hyperparameters and configurations are in config directory
     config = load_yaml(conf_file_path)
-
-    # add keys in config yaml file temporally for LLM class
-    config.huggingface_token = huggingface_token
-    config.openai_key = openai_key
-
-    # The prompts that used in this project should managed in prompt directory
-    prompt = load_yaml(os.path.join(config.root_dir, 'prompt', 'document_classification_prompt.yaml'))
-    input_text = make_dataset(config.root_dir)
+    prompt = load_yaml(os.path.join(config.root_dir, 'prompt', f'{config.task}_prompt.yaml'))
 
     # load the LLM class that we want
     llm = LLM(config)
 
-    new_df = pd.DataFrame(columns=['Text', 'Automotive_domain', 'model_description_1', 'Hyundai_group', 'model_description_2', 'Mobis', 'model_description_3'])
-    
-    for index, row in input_text.iterrows():
-        # cleaning the input article 
-        article = re.sub(r'[^\w\s]', '', row.text).strip()
-    
-        bool_output, cleaned_output = llm.evaluate_text(article, prompt.first_step)
+    # load the data that we want to classify
+    df = pd.read_csv(os.path.join(config.root_dir, 'dataset', f'{config.task}_data.csv'))
 
-        new_row = pd.DataFrame({'text': article, 'Automotive_domain': bool_output, 'model_description_1': cleaned_output})
-        new_df = pd.concat([new_df, new_row])
+    preprocessed_review = []
+    translate = []
+    product = []
+    model_code = []
+    keyword = []
+    topic = []
+    summary = []
+    risk_level = []
 
-    automotive_text = result_df[new_df['Automotive_domain'] == True]
-    for index, row in automotive_text.iterrows():
-        bool_output, cleaned_output = llm.evaluate_text(row['Text'], prompt.second_step)
+    for input_text in df['text']:
+        # generate the input text
+        input_text_dict = generate_input_text(prompt, input_text)
 
-        new_df.at[index, 'Hyundai_group'] = bool_output
-        new_df.at[index, 'model_description_2'] = cleaned_output
-        
+        start_time = time.time()
+        elapsed_time = 0
+
+        # Loop to generate and evaluate text until the time limit is reached
+        while elapsed_time < self.config.time_limit:
+            # Get the generated answer
+            gen_text = self.answer(input_text)
+
+            # Check if the generated text is valid
+            try:
+                eval(cleaned_output)
+                preprocessed_review.append(review)
+
+                if config.task == 'voc':
+                    translate.append(reply['translate'])
+                
+                elif config.task == 'onm':
+                    product.append(reply['product_name'])
+                    model_code.append(reply['model_code'].upper())
+
+                keyword.append(reply['keyword'])
+                topic.append(reply['topic'])
+                summary.append(reply['summary'])
+                risk_level.append(reply['risk_level'])
+
+            except:
+                # If the generated text is invalid, continue to the next iteration
+                continue
+
+            # Update elapsed time
+            elapsed_time = time.time() - start_time
     
-    save_path = os.path.join(config.root_dir, 'exp')
+    if config.task == 'voc':
+        df['translate'] = translate
+    elif config.task == 'onm':
+        df['product_name'] = product
+        df['model_code'] = model_code
+
+    df['keyword'] = keyword
+    df['topic'] = topic
+    df['summary'] = summary
+    df['risk_level'] = risk_level
+
+    save_path = os.path.join(config.save_dir, 'exp')
     mkdir(save_path)
-    new_df.to_csv(os.path.join(save_path, f'classified_article_{date}.csv', index=False))
+    df.to_csv(os.path.join(save_path, f'summerized_{config.task}.csv', index=False))
         
 
 

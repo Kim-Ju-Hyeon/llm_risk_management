@@ -1,14 +1,15 @@
 ---
 exp_name: text_classification
-root_dir: /root/jupyter/llm_risk_management/src
-save_dir: 
-device: cuda:0 # cuda:0, cuda:1, cpu
+root_dir: 
+save_dir:
+dataset_dir:
+device: cuda:0
 model: lamma2 # lamma2 or gpt3.5
 
 time_limit: 60 # Time limit for text classification (for each text) 
 
 model_name: meta-llama/Llama-2-13b-chat-hf 
-task: text-generation
+task: voc # onm : online negative monitoring
 
 # This parameters is best option for our project (50% sure)
 lamma_config:
@@ -23,9 +24,8 @@ lamma_config:
     top_p: 0.9
 
 openai_config:
-    model: gpt-3.5-turbo
-    max_tokens: 2048
-    temperature: 0.2
+    model: gpt-3.5-turbo-1106 # gpt-4-1106-preview
+    response_format: {"type": "json_object"}
+    max_tokens: 2048 # 과도한 과금을 막기위해 입력 토큰 제한
+    temperature: 0.2 # Higher value make the output more random -> deterministic한 결과를 얻기위해 낮은 값으로 설정
     top_p: 1.0
-    best_of: 1
-    stop: ["\n"]

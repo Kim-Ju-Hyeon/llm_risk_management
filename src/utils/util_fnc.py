@@ -8,7 +8,8 @@ from easydict import EasyDict as edict
 
 import numpy as np
 import pandas as pd
-import torch
+
+from soynlp.normalizer import repeat_normalize
 
 
 def edict2dict(edict_obj):
@@ -42,20 +43,7 @@ def edict2dict(edict_obj):
 
 
 def mkdir(folder):
-    """
-    Creates a new directory if it does not already exist.
-    
-    Checks whether the specified folder exists. If it does not,
-    the function will create the folder along with any necessary
-    intermediate directories.
-    
-    Parameters:
-    folder (str): The path of the directory to be created.
-    
-    Returns:
-    None
-    """
-    
+
     # Check if the directory already exists
     if not path.isdir(folder):
         # Create the directory
@@ -63,22 +51,7 @@ def mkdir(folder):
         os.makedirs(folder)
 
 
-
 def load_yaml(file_path):
-    """
-    Load a YAML file and return it as an EasyDict object.
-    
-    This function reads a YAML file specified by the file_path argument.
-    If the file exists, it will be loaded and returned as an EasyDict object.
-    If the file does not exist, a FileNotFoundError will be raised.
-    
-    Parameters:
-    file_path (str): The path to the YAML file to be loaded.
-    
-    Returns:
-    EasyDict: An EasyDict object containing the YAML data.
-    """
-    
     # Check if the file exists
     if os.path.exists(file_path):
         # Open the file in read mode with utf-8 encoding
@@ -92,46 +65,68 @@ def load_yaml(file_path):
         raise FileNotFoundError(f"The specified file '{file_path}' does not exist.")
 
 
-def cleaning_text(text):
-    """
-    Cleans the given text.
-    
-    1. Removes spaces at the beginning and end of the string.
-    2. Eliminates all characters except alphabets and spaces.
-    
-    Parameters:
-    text (str): The text to be cleaned.
-    
-    Returns:
-    str: The cleaned text.
-    """
-    
-    text = text.strip()  # Remove spaces at the beginning and end of the string
-    cleaned_text = re.sub(r'[^a-zA-Z\s]', '', text)  # Remove all characters except alphabets and spaces
-    return cleaned_text
+def generate_input_text(prompt_dict, text):
+    chosen_role_prompt = random.choice(prompt_dict['role_prompt'])
+    chosen_step_prompt = random.choice(prompt_dict['step_prompt'])
+    chosen_ex_prompt = random.sample(prompt_dict['example_prompt'], len(prompt_dict['example_prompt'])) # example prompt를 더 많이 생성해서 원하는 갯수로 뽑을 수 있게 구현 현재는 example peompt 갯수 자체가 적어서 그냥 다 뽑게 구현
+    chosen_fin_prompt = random.choice(prompt_dict['fin_prompt'])
 
 
-def generate_input_text(prompt_dict, article):
-    """
-    Generate input text by randomly choosing a prompt from each category in the provided dictionary.
+    input_text_dict = {
+        'role_prompt': chosen_role_prompt,
+        'step_prompt': chosen_step_prompt,
+        'chosen_example_prompt': [f"{idx+1}) Review: {ex[0]}, Answer: {ex[1]}" for idx, ex in enumerate(chosen_ex_prompt)],
+        'text': preprocess(text),
+        'fin_prompt': chosen_fin_prompt
+    }
     
-    Parameters:
-    prompt_dict (dict): Dictionary containing lists of prompts categorized as role_prompts, step_prompts, example_prompts, and last_prompts.
-    article (str): The article text
-    
-    Returns:
-    str: Generated input text list
-    """
-    chosen_role_prompt = random.choice(prompt_dict['role_prompts'])
-    chosen_step_prompt = random.choice(prompt_dict['step_prompts'])
-    chosen_example_prompt = random.choice(prompt_dict['example_prompts'])
-    chosen_last_prompt = random.choice(prompt_dict['last_prompts'])
+    return input_text_dict
 
-    input_text_list = [chosen_role_prompt, chosen_step_prompt, chosen_example_prompt, article, chosen_last_prompt]
-    # input_text = (f"{chosen_role_prompt}\n"
-    #               f"{chosen_step_prompt}\n"
-    #               f"{chosen_example_prompt}\n"
-    #               f"'''{article}'''\n"
-    #               f"{chosen_last_prompt}")
+
+punct = "/-'?!.,#$%\'()*+-/:;<=>@[\\]^_`{|}~" + '""“”’' + '∞θ÷α•à−β∅³π‘₹´°£€\×™√²—–&'
+punct_mapping = {"‘": "'", "₹": "e", "´": "'", "°": "", "€": "e", "™": "tm", "√": " sqrt ", "×": "x", 
+                "²": "2", "—": "-", "–": "-", "’": "'", "_": "-", "`": "'", '“': '"', '”': '"', '“': '"', 
+                "£": "e", '∞': 'infinity', 'θ': 'theta', '÷': '/', 'α': 'alpha', '•': '.', 'à': 'a', '−': '-', 
+                'β': 'beta', '∅': '', '³': '3', 'π': 'pi', }
     
-    return input_text_list
+
+def clean(text, punct, mapping):
+    for p in mapping:
+        text = text.replace(p, mapping[p])
+
+    for p in punct:
+        text = text.replace(p, f' {p} ')
+
+    specials = {'\u200b': ' ', '…': ' ... ', '\ufeff': '', 'करना': '', 'है': ''}
+    for s in specials:
+        text = text.replace(s, specials[s])
+
+    return text.strip()
+
+def clean_str(text):
+    pattern = '([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)' # E-mail제거
+    text = re.sub(pattern=pattern, repl='', string=text)
+    pattern = '(http|ftp|https)://(?:[-\w.]|(?:%[\da-fA-F]{2}))+' # URL제거
+    text = re.sub(pattern=pattern, repl='', string=text)
+    pattern = '([ㄱ-ㅎㅏ-ㅣ]+)'  # 한글 자음, 모음 제거
+    text = re.sub(pattern=pattern, repl='', string=text)
+    pattern = '<[^>]*>'         # HTML 태그 제거
+    text = re.sub(pattern=pattern, repl='', string=text)
+    pattern = '[^\w\s\n]'         # 특수기호제거
+    text = re.sub(pattern=pattern, repl='', string=text)
+    text = re.sub('[-=+,#/\?:^$.@*\"※~&%ㆍ!』\\‘|\(\)\[\]\<\>`\'…》]','', string=text)
+    text = re.sub('\n', '.', string=text)
+
+    return text
+
+def normalize(text):
+    text = repeat_normalize(text)
+    return text
+
+
+def preprocess(text):
+    text = clean(text, punct, punct_mapping)
+    text = clean_str(text)
+    text = normalize(text)
+
+    return text

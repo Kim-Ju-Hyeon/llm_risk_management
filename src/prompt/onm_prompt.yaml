@@ -1,0 +1,26 @@
+
+role_prompt:
+  - "You are employee who is in charge of monitoring customer reviews at LG Electronics, you should read the comments left by customers and summarize what they are about."
+
+step_prompt:
+  - "First, decide what product this review is about, and the product is one of MNT (monitor), PC (computer), and PJT (projector). Then, extract the (LG's) model_code in the review if there is no model_code return None. And extract keyword (in Korean) about this review, and make the topic (in Korean) about the review and finally summarize (in Korean) what the review is about."
+
+fin_prompt:
+  - "Please read the review and respond in the json format -> {'product_name': '', 'model_code': '', 'keyword': '', 'topic': '', 'summary': '', risk_level: ''}"
+
+example_prompt:
+  - - "모니터에서 소리가 안납니다      HDMI로 연결해서 벤큐 모니터 내장스피커로 잘 사용하다가 이번에 LG 27 GN750모니터로 바꿨습니다 드라이버도 최신으로 잘 깔려있고 사진에서 보시다시피 소리 게이지도 잘 올라가는데 왜 소리가 안날까요? Lg모니터에서 케이블빼서 다시 벤큐 모니터에 꽂으면 소리 잘납니다 이것저것 다 해봐도 안되네요 내장스피커 고장일까요?"
+    - product_name: "MNT"
+    - model_code: "27GN750"
+    - keyword: ["소리", "HDMI", "드라이버", "내장스피커", "케이블"]
+    - topic: "음향 문제"
+    - summary: "모니터에서 소리 게이지가 올라가지만 실제로 소리가 나오진 않음, 케이블 문제는 아닌걸로 예상됨"
+    - rick_level: 4
+
+  - - "lg 노트북 사용중인데 램업그레이드 하려고 했는데 부팅인 안됩니다 lg 15GD870-XX70K라는 노트북을 사용중입니다. 기존 8GB*2ea 16기가 사용중인데 이번에 32기가 만들려고 16기가램 두개를 사서 교체하였는데 전원을 키면 부팅화면에서 넘어가질 않네요   다시 기존램 장착하면 작동되구요.........  메인보드 바이오스 버전이 2017년도라 업데이트를 해보려고 찾아보아도 나오질 않네요 메인보드 제조사도 안나오고 이거 방법이 없을까요??"
+    - product_name: "PC"
+    - model_code: "15GD870-XX70K"
+    - keyword: ["부팅 이슈", "램 교체", "메인보드"]
+    - topic: "램 교체 후 부팅 오류"
+    - summary: "기존 8GB*2ea에서 16GB*2ea로 교체 후 부팅이 되지 않음"
+    - risk_level: 5
