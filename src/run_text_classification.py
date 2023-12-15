@@ -47,34 +47,41 @@ def main(conf_file_path):
         start_time = time.time()
         elapsed_time = 0
 
-        # Loop to generate and evaluate text until the time limit is reached
-        while elapsed_time < self.config.time_limit:
-            # Get the generated answer
-            gen_text = self.answer(input_text)
+        # Get the generated answer
+        reply = self.answer(input_text_dict)
 
-            # Check if the generated text is valid
-            try:
-                eval(cleaned_output)
-                preprocessed_review.append(review)
+        # Check if the generated text is valid
+        try:
+            reply = eval(reply)
 
+            if config.task == 'voc':
+                translate.append(reply['translate'])
+            
+            elif config.task == 'onm':
+                product.append(reply['product_name'])
+                model_code.append(reply['model_code'].upper())
+
+            keyword.append(reply['keyword'])
+            topic.append(reply['topic'])
+            summary.append(reply['summary'])
+            risk_level.append(reply['risk_level'])
+
+        except:
+            # If the generated text is invalid, continue to the next iteration
                 if config.task == 'voc':
-                    translate.append(reply['translate'])
+                    translate.append(None)
                 
                 elif config.task == 'onm':
-                    product.append(reply['product_name'])
-                    model_code.append(reply['model_code'].upper())
+                    product.append(None)
+                    model_code.append(None)
 
-                keyword.append(reply['keyword'])
-                topic.append(reply['topic'])
-                summary.append(reply['summary'])
-                risk_level.append(reply['risk_level'])
+                keyword.append(None)
+                topic.append(None)
+                summary.append(None)
+                risk_level.append(None)
 
-            except:
-                # If the generated text is invalid, continue to the next iteration
-                continue
-
-            # Update elapsed time
-            elapsed_time = time.time() - start_time
+        # Update elapsed time
+        elapsed_time = time.time() - start_time
     
     if config.task == 'voc':
         df['translate'] = translate
@@ -87,9 +94,9 @@ def main(conf_file_path):
     df['summary'] = summary
     df['risk_level'] = risk_level
 
-    save_path = os.path.join(config.save_dir, 'exp')
+    save_path = os.path.join(config.root_dir, 'exp')
     mkdir(save_path)
-    df.to_csv(os.path.join(save_path, f'summerized_{config.task}.csv', index=False))
+    df.to_csv(os.path.join(save_path, f'summerized_{config.task}.csv'), index=False)
         
 
 
