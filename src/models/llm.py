@@ -25,7 +25,7 @@ class LLM:
                 
             # Create a pipeline for the specified task
             self.pipeline = pipeline(
-                config['task'],
+                'text-generation',
                 model=config['model_name'],
                 tokenizer=self.tokenizer,
                 torch_dtype=self.torch_dtype,
@@ -33,14 +33,14 @@ class LLM:
             )
 
         elif 'gpt' in self.config['model']:
-            pass
+            self._client = OpenAI()
 
         else:
             # Raise an error if an unsupported model is specified
             raise ValueError("Not a supported model")
 
     # Generate an answer based on the input x
-    def answer(self, input_text_dict: dict): -> str:
+    def answer(self, input_text_dict: dict):
         if self.config['model'] == 'lamma2':
             
             # Preprocess the input and generate an answer using Lamma2
@@ -75,7 +75,7 @@ class LLM:
                 {"role": "user", "content": input_text_dict['fin_prompt']}
             ]
 
-            response = openai.ChatCompletion.create(**self.config['openai_config'], messages=messages)
+            response = self._client.chat.completions.create(**self.config['openai_config'], messages=messages)
             return response.choices[0].message.content
         
         else:
