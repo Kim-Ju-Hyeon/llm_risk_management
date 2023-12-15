@@ -18,8 +18,8 @@ lamma_config:
     eos_token_id: 2  # Replace with model's eos_token_id 
     max_length: 4096
     temperature: 0.1 # high temperature make model's output diverse but we don't need it for our's project
-    repetition_penalty: 1.2 
-    no_repeat_ngram_size: 3
+    repetition_penalty: 1.2  # 반복되는 토큰에 패널티 적용
+    no_repeat_ngram_size: 3 # n개 이상 반복 토큰 제한
     top_p: 0.9
 
 openai_config:
