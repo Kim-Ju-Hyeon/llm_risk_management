@@ -12,7 +12,7 @@ task: voc # onm : online negative monitoring
 
 # This parameters is best option for our project (50% sure)
 lamma_config:
-    model: meta-llama/Llama-2-13b-chat-hf 
+    model: meta-llama/Llama-2-7b-chat-hf 
     do_sample: True
     top_k: 10
     num_return_sequences: 1
