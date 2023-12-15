@@ -1,5 +1,6 @@
 from transformers import AutoTokenizer, AutoModel, pipeline
 import torch
+from openai import OpenAI
 import openai
 import time
 from utils.util_fnc import preprocess, generate_input_text
@@ -11,7 +12,7 @@ class LLM:
         self.config = config
         
         # Load the appropriate model and tokenizer based on the configuration
-        if 'lamma' in self.config['model']:
+        if 'llama' in self.config['model']:
             # Initialize the Lamma2 tokenizer
             # self.tokenizer = AutoTokenizer.from_pretrained(config['model_name'], token=config['huggingface_token'])
             self.tokenizer = AutoTokenizer.from_pretrained(self.config['model'], use_auth_token=True)
