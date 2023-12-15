@@ -11,22 +11,22 @@ class LLM:
         self.config = config
         
         # Load the appropriate model and tokenizer based on the configuration
-        if self.config['model'] == 'lamma2':
+        if 'lamma' in self.config['model']:
             # Initialize the Lamma2 tokenizer
             # self.tokenizer = AutoTokenizer.from_pretrained(config['model_name'], token=config['huggingface_token'])
-            self.tokenizer = AutoTokenizer.from_pretrained(config['lamma_config']['model'], use_auth_token=True)
+            self.tokenizer = AutoTokenizer.from_pretrained(self.config['model'], use_auth_token=True)
 
             # Check if CUDA is available and set the appropriate data type, If inference at GPU we need to set data type ro float16 (But when we inference at CPU, we need to set float32)
-            if torch.cuda.is_available() and 'cuda' in config['device']:
+            if torch.cuda.is_available() and 'cuda' in self.config['device']:
                 self.torch_dtype = torch.float16
             else:
-                config['device'] = 'cpu'
+                self.config['device'] = 'cpu'
                 self.torch_dtype = torch.float32
                 
             # Create a pipeline for the specified task
             self.pipeline = pipeline(
                 'text-generation',
-                model=config['lamma_config']['model'],
+                model=self.config['model'],
                 tokenizer=self.tokenizer,
                 torch_dtype=self.torch_dtype,
                 device_map='auto'
@@ -41,7 +41,7 @@ class LLM:
 
     # Generate an answer based on the input x
     def answer(self, input_text_dict: dict):
-        if self.config['model'] == 'lamma2':
+        if 'lamma' in self.config['model']:
             
             # Preprocess the input and generate an answer using Lamma2
             
@@ -49,7 +49,7 @@ class LLM:
             sequences = self.pipeline(x, **self.config['lamma_config'])
             return sequences[0]['generated_text'].replace(x, "")
         
-        elif self.config['model'] == 'gpt3.5':
+        elif 'gpt' in self.config['model']:
             '''
             Preprocess the input and generate an answer using GPT-3.5
             There is an three role in chatGPT Open AI API
