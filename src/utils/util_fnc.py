@@ -65,10 +65,10 @@ def load_yaml(file_path):
         raise FileNotFoundError(f"The specified file '{file_path}' does not exist.")
 
 
-def generate_input_text(prompt_dict, text):
+def generate_input_text(prompt_dict, text, ex_num=3):
     chosen_role_prompt = random.choice(prompt_dict['role_prompt'])
     chosen_step_prompt = random.choice(prompt_dict['step_prompt'])
-    chosen_ex_prompt = random.sample(prompt_dict['example_prompt'], len(prompt_dict['example_prompt'])) # example prompt를 더 많이 생성해서 원하는 갯수로 뽑을 수 있게 구현 현재는 example peompt 갯수 자체가 적어서 그냥 다 뽑게 구현
+    chosen_ex_prompt = random.sample(prompt_dict['example_prompt'], min(ex_num, len(prompt_dict['example_prompt']))) # example prompt를 더 많이 생성해서 원하는 갯수로 뽑을 수 있게 구현 현재는 example peompt 갯수 자체가 적어서 그냥 다 뽑게 구현
     chosen_fin_prompt = random.choice(prompt_dict['fin_prompt'])
 
 

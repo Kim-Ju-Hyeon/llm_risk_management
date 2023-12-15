@@ -42,7 +42,7 @@ class LLM:
 
     # Generate an answer based on the input x
     def answer(self, input_text_dict: dict):
-        if 'lamma' in self.config['model']:
+        if 'llama' in self.config['model']:
             
             # Preprocess the input and generate an answer using Lamma2
             
