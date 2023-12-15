@@ -14,7 +14,7 @@ class LLM:
         if self.config['model'] == 'lamma2':
             # Initialize the Lamma2 tokenizer
             # self.tokenizer = AutoTokenizer.from_pretrained(config['model_name'], token=config['huggingface_token'])
-            self.tokenizer = AutoTokenizer.from_pretrained(config['model_name'])
+            self.tokenizer = AutoTokenizer.from_pretrained(config['model_name'], use_auth_token=True)
 
             # Check if CUDA is available and set the appropriate data type, If inference at GPU we need to set data type ro float16 (But when we inference at CPU, we need to set float32)
             if torch.cuda.is_available() and 'cuda' in config['device']:
@@ -29,7 +29,7 @@ class LLM:
                 model=config['model_name'],
                 tokenizer=self.tokenizer,
                 torch_dtype=self.torch_dtype,
-                device=config['device']
+                device_map='auto'
             )
 
         elif 'gpt' in self.config['model']:

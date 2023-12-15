@@ -4,15 +4,15 @@ root_dir:
 save_dir:
 dataset: MNT # OC, PJT, onm
 device: cuda:0
-model: lamma2 # lamma2 or gpt3.5
+model: lamma2 # lamma2 or gpt
 
 time_limit: 60 # Time limit for text classification (for each text) 
 
-model_name: meta-llama/Llama-2-13b-chat-hf 
 task: voc # onm : online negative monitoring
 
 # This parameters is best option for our project (50% sure)
 lamma_config:
+    model: meta-llama/Llama-2-13b-chat-hf 
     do_sample: True
     top_k: 10
     num_return_sequences: 1
