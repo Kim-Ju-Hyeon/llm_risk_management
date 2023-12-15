@@ -68,12 +68,10 @@ class LLM:
             로 message를 구성하였습니다.
             '''
             messages = [
-                {"role": "system", "content": input_text_dict['role_prompt']},
-                {"role": "system", "content": input_text_dict['step_prompt']},
-                {"role": "assistant", "content": input_text_dict['chosen_example_prompt']},
-                {"role": "user", "content": input_text_dict['text']},
-                {"role": "user", "content": input_text_dict['fin_prompt']}
-            ]
+                            {"role": "system", "content": input_text_dict['role_prompt']},
+                            {"role": "assistant", "content": input_text_dict['step_prompt'] + 'For Example' + str(input_text_dict['chosen_example_prompt'])},
+                            {"role": "user", "content": input_text_dict['text'] + '\n' + input_text_dict['fin_prompt']},
+                        ]
 
             response = self._client.chat.completions.create(**self.config['openai_config'], messages=messages)
             return response.choices[0].message.content
